@@ -44,6 +44,16 @@ RUN cd /opt && \
     rm -rf /opt/mautic/var/cache/js && \
     find /opt/mautic/node_modules -mindepth 1 -maxdepth 1 -not \( -name 'jquery' -or -name 'vimeo-froogaloop2' \) | xargs rm -rf
 
+# Since Mautic 7.2 the Composer package no longer includes the GrapesJS builder's
+# compiled assets (mautic/mautic#16435). Build them when missing, or the builder won't load.
+RUN cd /opt/mautic/docroot/plugins/GrapesJsBuilderBundle && \
+    if [ ! -f Assets/library/js/dist/builder.js ]; then \
+        npm ci --prefer-offline --no-audit \
+        && npm run build \
+        && test -f Assets/library/js/dist/manifest.json \
+        && rm -rf node_modules .parcel-cache; \
+    fi
+
 FROM php:${BASE_TAG}
 
 LABEL vendor="Mautic"

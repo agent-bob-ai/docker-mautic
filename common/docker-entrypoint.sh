@@ -44,13 +44,13 @@ DOCKER_MAUTIC_ROLE"
 
 case "${DOCKER_MAUTIC_ROLE}" in
   mautic_web)
-    /entrypoint_mautic_web.sh "$@"
+    exec /entrypoint_mautic_web.sh "$@"
     ;;
   mautic_cron)
-    /entrypoint_mautic_cron.sh
+    exec /entrypoint_mautic_cron.sh
     ;;
   mautic_worker)
-    /entrypoint_mautic_worker.sh
+    exec /entrypoint_mautic_worker.sh
     ;;
   *)
     log_startup_error_header

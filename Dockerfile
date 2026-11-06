@@ -29,7 +29,7 @@ RUN curl -fsSL \
     echo "${IPE_SHA256}  /usr/local/bin/install-php-extensions" | sha256sum -c - && \
     chmod +x /usr/local/bin/install-php-extensions
 
-RUN install-php-extensions intl mbstring mysqli curl pdo_mysql zip bcmath sockets exif amqp gd imap opcache
+RUN install-php-extensions intl mbstring mysqli curl pdo_mysql zip bcmath sockets exif amqp gd imap opcache pcntl
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer

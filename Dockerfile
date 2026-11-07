@@ -144,10 +144,19 @@ RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
     apt-get install -y nodejs && \
     npm install -g npm@latest
 
+# CKEditor 5 at least this version: Mautic 7.2.2 still locks 48.4.0, and 48.5.1 fixes two
+# XSS advisories (GHSA-v6mg-96c6-gmpq, GHSA-rh54-vffm-5fvp). A lock already at or above it is
+# left alone. An empty CKEDITOR_VERSION keeps Mautic's lock. See common/build/ckeditor.js.
+ARG CKEDITOR_VERSION=48.5.3
+ARG CKEDITOR_FLOOR=48.5.1
+
 # Rebuild web assets
-RUN cd /var/www/html && \
+RUN --mount=type=bind,source=common/build/ckeditor.js,target=/tmp/ckeditor.js \
+    cd /var/www/html && \
+    if [ -n "$CKEDITOR_VERSION" ]; then node /tmp/ckeditor.js raise "$CKEDITOR_VERSION"; fi && \
     npm install && \
     php bin/console mautic:assets:generate && \
+    if [ -n "$CKEDITOR_VERSION" ]; then node /tmp/ckeditor.js check "$CKEDITOR_FLOOR"; fi && \
     php bin/console cache:clear
 
 RUN if [ "$FLAVOUR" = "apache" ]; then \

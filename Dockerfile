@@ -147,7 +147,12 @@ RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
 # CKEditor 5 at least this version: Mautic 7.2.2 still locks 48.4.0, and 48.5.1 fixes two
 # XSS advisories (GHSA-v6mg-96c6-gmpq, GHSA-rh54-vffm-5fvp). A lock already at or above it is
 # left alone. An empty CKEDITOR_VERSION keeps Mautic's lock. See common/build/ckeditor.js.
-ARG CKEDITOR_VERSION=48.5.3
+#
+# TEST BRANCH ONLY (test/keep-mautic-ckeditor, never merged): empty, so Mautic 7.0.x keeps its
+# CKEditor 47 lock, which the raise to 48 can't handle (48 has no ckeditor5-theme-lark). Built
+# for the mautic-manager slice 7 upgrade test (tst2: 7.0.2 -> 7.2.2). Images from this branch
+# carry both advisories above and must never reach a client.
+ARG CKEDITOR_VERSION=
 ARG CKEDITOR_FLOOR=48.5.1
 
 # Rebuild web assets
